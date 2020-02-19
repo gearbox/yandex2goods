@@ -26,17 +26,19 @@ def verify_input(text: str):
         replace('<', '&lt;').replace('\'', '&apos;')
 
 
-def build_tree(file_name, worksheet, categories: dict, max_rows_limit=None):
+def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict, max_rows_limit: int = None):
     max_row = None
     if 0 < max_rows_limit < worksheet.max_row:
         max_row = max_rows_limit + 1
     catalogue = ET.Element('yml_catalog', date=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')))
     shop = ET.SubElement(catalogue, 'shop')
-    ET.SubElement(shop, 'name').text = 'Vitavim'
-    ET.SubElement(shop, 'company').text = 'ООО "Жизнь"'
-    ET.SubElement(shop, 'url').text = 'https://vitavim.ru/'
+    ET.SubElement(shop, 'name').text = shop_info['name']
+    ET.SubElement(shop, 'company').text = shop_info['company']
+    ET.SubElement(shop, 'url').text = shop_info['url']
     shop_currencies = ET.SubElement(shop, 'currencies')
-    ET.SubElement(shop_currencies, 'currency', id='RUR', rate='1')
+    for currency in shop_info['currencies']:
+        for cur_id, cur_rate in currency.items():
+            ET.SubElement(shop_currencies, 'currency', id=cur_id, rate=cur_rate)
     categories_section = ET.SubElement(shop, 'categories')
     for cat_name, cat_id in categories.items():
         ET.SubElement(categories_section, 'category', id=cat_id).text = cat_name
@@ -71,6 +73,16 @@ if __name__ == "__main__":
     # Список категорий в формате {'name1': 'id1', 'name2': 'id2', etc}
     product_categories = {'Суперфуды': '1', 'Масло растительное': '2'}
 
+    # Информация о подключаемом магазине (компании)
+    shop_info = {
+        'name': 'Vitavim',
+        'company': 'ООО "Жизнь"',
+        'url': 'https://vitavim.ru/',
+        'currencies': [
+            {'RUR': '1'}
+        ]
+    }
+
     # Количество товаров конвертируемых в xml, 0 - без ограничения
     products_limit = 0
 
@@ -89,4 +101,4 @@ if __name__ == "__main__":
         for sheet in wb.worksheets:
             header = list(sheet.rows)[0]
             if sheet.max_row > 1:
-                build_tree(output_xml, sheet, product_categories, max_rows_limit=products_limit)
+                build_tree(output_xml, sheet, shop_info, product_categories, max_rows_limit=products_limit)
