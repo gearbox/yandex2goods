@@ -1,5 +1,6 @@
 from pathlib import Path
-from openpyxl import load_workbook
+import xlrd
+import msoffcrypto
 import xml.etree.ElementTree as ET
 import datetime
 
@@ -26,10 +27,7 @@ def verify_input(text: str):
         replace('<', '&lt;').replace('\'', '&apos;')
 
 
-def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict, max_rows_limit: int = None):
-    max_row = None
-    if 0 < max_rows_limit < worksheet.max_row:
-        max_row = max_rows_limit + 1
+def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict):
     catalogue = ET.Element('yml_catalog', date=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')))
     shop = ET.SubElement(catalogue, 'shop')
     ET.SubElement(shop, 'name').text = shop_info['name']
@@ -45,16 +43,17 @@ def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict, ma
     # shipment_options = ET.SubElement(shop, 'shipment-options')
     offers = ET.SubElement(shop, "offers")
 
-    for product in worksheet.iter_rows(min_row=2, max_row=max_row):
-        available = 'true' if product[1].value == 'В наличии' or product[1].value is None else 'false'
-        offer = ET.SubElement(offers, 'offer', id=str(product[0].value), available=available)
-        ET.SubElement(offer, 'url').text = product[7].value
-        ET.SubElement(offer, 'name').text = verify_input(product[9].value)
-        ET.SubElement(offer, 'price').text = verify_input(str(product[11].value))
-        ET.SubElement(offer, 'categoryId').text = categories[product[10].value]
-        ET.SubElement(offer, 'picture').text = product[14].value
-        ET.SubElement(offer, 'vendor').text = verify_input(product[8].value)
-        ET.SubElement(offer, 'description').text = verify_input(product[15].value)
+    for product in [worksheet.row_values(i) for i in range(2, worksheet.nrows)]:
+        print(product)
+        available = 'true' if product[1] == 'В наличии' or product[1] is None else 'false'
+        offer = ET.SubElement(offers, 'offer', id=str(int(product[0])), available=available)
+        ET.SubElement(offer, 'url').text = product[7]
+        ET.SubElement(offer, 'name').text = verify_input(product[9])
+        ET.SubElement(offer, 'price').text = verify_input(str(product[11]))
+        ET.SubElement(offer, 'categoryId').text = categories[product[10]]
+        ET.SubElement(offer, 'picture').text = product[14]
+        ET.SubElement(offer, 'vendor').text = verify_input(product[8])
+        ET.SubElement(offer, 'description').text = verify_input(product[15])
     indent(catalogue)
 
     tree = ET.ElementTree(catalogue)
@@ -74,7 +73,7 @@ if __name__ == "__main__":
     product_categories = {'Суперфуды': '1', 'Масло растительное': '2'}
 
     # Информация о подключаемом магазине (компании)
-    shop_info = {
+    shop_information = {
         'name': 'Vitavim',
         'company': 'ООО "Жизнь"',
         'url': 'https://vitavim.ru/',
@@ -90,15 +89,32 @@ if __name__ == "__main__":
     project_input_dir = project_dir_path / 'in'
     project_results_dir = project_dir_path / 'out'
     Path(project_results_dir).mkdir(exist_ok=True)
-    input_xls = project_input_dir / 'goods.xlsx'
+    decrypted = project_input_dir / 'decrypted.xls'
 
     types = ('.xls', '.xlsx')
     files_grabbed = read_files(project_input_dir, types)
 
     for f in files_grabbed:
         output_xml = project_results_dir / (str(datetime.datetime.now().date()) + '_' + f.name.split('.')[0] + '.xml')
-        wb = load_workbook(f)
-        for sheet in wb.worksheets:
-            header = list(sheet.rows)[0]
-            if sheet.max_row > 1:
-                build_tree(output_xml, sheet, shop_info, product_categories, max_rows_limit=products_limit)
+        try:
+            with xlrd.open_workbook(f) as wb:
+                sheets = wb.sheet_names()
+        except xlrd.biffh.XLRDError as err:
+            print('File is encrypted.', err)
+            wb_msoffcrypto_file = msoffcrypto.OfficeFile(open(f, 'rb'))
+            wb_msoffcrypto_file.load_key(password='VelvetSweatshop')
+            print('Worked Password')
+            wb_msoffcrypto_file.decrypt(open(decrypted, 'wb'))
+            with xlrd.open_workbook(decrypted) as wb:
+                sheets = wb.sheet_names()
+
+        print(sheets)
+        if len(sheets) < 2:
+            sheet = wb.sheet_by_name(sheets[0])
+        else:
+            sheet = wb.sheet_by_index(2)
+
+        if sheet.nrows > 2:
+            build_tree(output_xml, sheet, shop_information, product_categories)
+        if decrypted.exists():
+            decrypted.unlink()
