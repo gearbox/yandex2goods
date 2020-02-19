@@ -44,7 +44,7 @@ def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict):
     offers = ET.SubElement(shop, "offers")
 
     for product in [worksheet.row_values(i) for i in range(2, worksheet.nrows)]:
-        print(product)
+        # print(product)
         available = 'true' if product[1] == 'В наличии' or product[1] is None else 'false'
         offer = ET.SubElement(offers, 'offer', id=str(int(product[0])), available=available)
         ET.SubElement(offer, 'url').text = product[7]
@@ -100,15 +100,15 @@ if __name__ == "__main__":
             with xlrd.open_workbook(f) as wb:
                 sheets = wb.sheet_names()
         except xlrd.biffh.XLRDError as err:
-            print('File is encrypted.', err)
+            # print('File is encrypted.', err)
             wb_msoffcrypto_file = msoffcrypto.OfficeFile(open(f, 'rb'))
             wb_msoffcrypto_file.load_key(password='VelvetSweatshop')
-            print('Worked Password')
+            # print('Worked Password')
             wb_msoffcrypto_file.decrypt(open(decrypted, 'wb'))
             with xlrd.open_workbook(decrypted) as wb:
                 sheets = wb.sheet_names()
 
-        print(sheets)
+        # print(sheets)
         if len(sheets) < 2:
             sheet = wb.sheet_by_name(sheets[0])
         else:
