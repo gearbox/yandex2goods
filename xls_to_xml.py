@@ -63,6 +63,8 @@ def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict):
 def read_files(path: Path, file_types: tuple):
     if path.is_dir():
         input_files = [item for item in path.iterdir() if item.name.endswith(file_types)]
+        root_files = [item for item in Path(__file__).parent.iterdir() if item.name.endswith(file_types)]
+        input_files.extend(root_files)
         return input_files
     return False
 
