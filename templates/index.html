@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+        <h1> Яндекс.Маркет XLS в XML в формате Goods.ru</h1>
+        <p>Конвертируем XLS файл, выгруженный из Яндекс.Маркет в XML файл в формате Goods.ru.</p>
+        <!-- HTML provided in the following sections goes here. -->
+        <div class="row">
+            <div class="col">
+                <form id="upload-file" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <fieldset>
+                            <legend>Загрузите XLS файл</legend>
+                            <label for="file">Выберите файл</label>
+                            <input class="form-control" id="file" name="file" type="file">
+                            <br>
+                            <button class="btn btn-primary mb-2" id="upload-file-btn" type="button">Конвертировать</button>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- End -->
+{% endblock %}

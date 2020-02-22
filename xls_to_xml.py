@@ -3,6 +3,11 @@ import xlrd
 import msoffcrypto
 import xml.etree.ElementTree as ET
 import datetime
+import tempfile
+from werkzeug.utils import secure_filename
+
+# Allowed file types without "."
+ALLOWED_TYPES = {'xls', 'xlsx'}
 
 
 # Indent XML into a beautified format
@@ -23,7 +28,7 @@ def indent(elem, level=0):
 
 
 def verify_input(text: str):
-    return text.replace('"', '&quot;').replace('&', '&amp;').replace('>', '&gt;').\
+    return text.replace('"', '&quot;').replace('&', '&amp;').replace('>', '&gt;'). \
         replace('<', '&lt;').replace('\'', '&apos;')
 
 
@@ -60,19 +65,39 @@ def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict):
     tree.write(file_name, xml_declaration=True, encoding='utf-8', method="xml")
 
 
-def read_files(path: Path, file_types: tuple):
+def allowed_filetype(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_TYPES
+
+
+def read_files(path: Path):
     if path.is_dir():
-        input_files = [item for item in path.iterdir() if item.name.endswith(file_types)]
-        root_files = [item for item in Path(__file__).parent.iterdir() if item.name.endswith(file_types)]
+        input_files = [item for item in path.iterdir() if allowed_filetype(item.name)]
+        root_files = [item for item in Path(__file__).parent.iterdir() if allowed_filetype(item.name)]
         input_files.extend(root_files)
         return input_files
-    return False
 
 
-if __name__ == "__main__":
+def read_xls_sheet(file):
+    try:
+        with xlrd.open_workbook(filename=file, file_contents=None if isinstance(file, Path) else file.read()) as wb:
+            sheets = wb.sheet_names()
+    except xlrd.biffh.XLRDError as err:
+        print('File is encrypted.', err)
+        with tempfile.TemporaryFile() as tf:
+            encrypted = msoffcrypto.OfficeFile(file if not isinstance(file, Path) else open(file, 'rb'))
+            encrypted.load_key(password='VelvetSweatshop')
+            encrypted.decrypt(tf)
+            # print('Worked Password')
+            tf.seek(0)
+            wb = xlrd.open_workbook(file_contents=tf.read())
+            sheets = wb.sheet_names()
+    return wb.sheet_by_name(sheets[0]) if len(sheets) < 2 else wb.sheet_by_index(2)
+
+
+def convert(file=None):
     # Settings
     # Список категорий в формате {'name1': 'id1', 'name2': 'id2', etc}
-    product_categories = {'Суперфуды': '1', 'Масло растительное': '2'}
+    product_categories = {'Суперфуды': '1', 'Масло растительное': '2', 'Витамины и минералы': '3'}
 
     # Информация о подключаемом магазине (компании)
     shop_information = {
@@ -84,39 +109,29 @@ if __name__ == "__main__":
         ]
     }
 
-    # Количество товаров конвертируемых в xml, 0 - без ограничения
-    products_limit = 0
-
     project_dir_path = Path(__file__).parent
-    project_input_dir = project_dir_path / 'in'
-    project_results_dir = project_dir_path / 'out'
+    project_input_dir = project_dir_path / 'static' / 'in'
+    project_results_dir = project_dir_path / 'static' / 'out'
     Path(project_results_dir).mkdir(exist_ok=True)
-    decrypted = project_input_dir / 'decrypted.xls'
 
-    types = ('.xls', '.xlsx')
-    files_grabbed = read_files(project_input_dir, types)
+    files_grabbed = []
+    if file is None:
+        files_grabbed.extend(read_files(project_input_dir))
+    elif file and allowed_filetype(file.filename):
+        files_grabbed.append(file)
+    # print(files_grabbed)
 
+    output_xml = ''
     for f in files_grabbed:
-        output_xml = project_results_dir / (str(datetime.datetime.now().date()) + '_' + f.name.split('.')[0] + '.xml')
-        try:
-            with xlrd.open_workbook(f) as wb:
-                sheets = wb.sheet_names()
-        except xlrd.biffh.XLRDError as err:
-            # print('File is encrypted.', err)
-            wb_msoffcrypto_file = msoffcrypto.OfficeFile(open(f, 'rb'))
-            wb_msoffcrypto_file.load_key(password='VelvetSweatshop')
-            # print('Worked Password')
-            wb_msoffcrypto_file.decrypt(open(decrypted, 'wb'))
-            with xlrd.open_workbook(decrypted) as wb:
-                sheets = wb.sheet_names()
-
-        # print(sheets)
-        if len(sheets) < 2:
-            sheet = wb.sheet_by_name(sheets[0])
-        else:
-            sheet = wb.sheet_by_index(2)
-
+        # print('*F File Type: ', type(f))
+        output_xml = project_results_dir / ((f.name.split('.')[0] if isinstance(f, Path) else
+                                             secure_filename(f.filename).rsplit('.', 1)[0]) + '.xml')
+        # f.filename.rsplit('.', 1)[0]) + '.xml')
+        sheet = read_xls_sheet(f)
         if sheet.nrows > 2:
             build_tree(output_xml, sheet, shop_information, product_categories)
-        if decrypted.exists():
-            decrypted.unlink()
+    return output_xml
+
+
+if __name__ == "__main__":
+    convert()
