@@ -1,9 +1,10 @@
-from pathlib import Path
-import xlrd
-import msoffcrypto
-import xml.etree.ElementTree as ET
 import datetime
 import tempfile
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+import msoffcrypto
+import xlrd
 from werkzeug.utils import secure_filename
 
 # Allowed file types without "."

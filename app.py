@@ -1,13 +1,16 @@
-from pathlib import Path
-
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import send_from_directory
 
 import xls_to_xml
 
-SERVED_FOLDER = project_dir_path = Path(__file__).parent / '/static/out'
+SERVED_FOLDER = 'static/out'
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='static',
+    template_folder='templates'
+)
 app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
 app.config['SERVED_FOLDER'] = SERVED_FOLDER
 app.secret_key = "my super duper mega secret key"
@@ -30,16 +33,17 @@ def convert_file():
         flash('No file part')
         return redirect(request.host_url)
     file = request.files['file']
-
-    # if user does not select file, browser also
-    # submit an empty part without filename
+    # if user does not select file, browser also submit an empty part without filename
     if file.filename == '':
         flash('No selected file')
+        return redirect(request.host_url)
+    if not xls_to_xml.allowed_filetype(file.filename):
+        flash('Not valid file')
         return redirect(request.host_url)
     filename = xls_to_xml.convert(file)
     return redirect(url_for('serve_files', filename=filename.name))
 
 
 if __name__ == '__main__':
-    app.debug = True
+    # app.debug = True
     app.run()
