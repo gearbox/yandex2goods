@@ -30,16 +30,17 @@ def serve_files(filename):
 def convert_file():
     # check if the post request has the file part
     if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.host_url)
+        flash('No file part', 'warning')
+        return redirect(request.path)
+        # return redirect(url_for('index'))
     file = request.files['file']
     # if user does not select file, browser also submit an empty part without filename
     if file.filename == '':
-        flash('No selected file')
-        return redirect(request.host_url)
+        flash('No selected file', 'warning')
+        return redirect(url_for('index'))
     if not xls_to_xml.allowed_filetype(file.filename):
-        flash('Not valid file')
-        return redirect(request.host_url)
+        flash('Not valid file', 'danger')
+        return redirect(url_for('index'))
     filename = xls_to_xml.convert(file)
     return redirect(url_for('serve_files', filename=filename.name))
 
