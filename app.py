@@ -1,7 +1,8 @@
 from pathlib import Path
-from flask import Flask, render_template, request, redirect, url_for, flash  # , jsonify
+
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import send_from_directory
-# from werkzeug.utils import secure_filename
+
 import xls_to_xml
 
 SERVED_FOLDER = project_dir_path = Path(__file__).parent / '/static/out'
@@ -29,12 +30,6 @@ def convert_file():
         flash('No file part')
         return redirect(request.host_url)
     file = request.files['file']
-    # print(data)
-    # print(data['file'])
-    # text_input = data['text']
-    # translation_output = data['to']
-    # response = xls_to_xml
-    # return jsonify(response)
 
     # if user does not select file, browser also
     # submit an empty part without filename
