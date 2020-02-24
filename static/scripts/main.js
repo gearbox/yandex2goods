@@ -13,9 +13,9 @@ $(function() {
                 if (data.redirect) {
                     // if( data.load_html) {
                     // data.redirect contains the string URL to redirect to
-                    window.location.href = data.redirect;
+                    // window.location.href = data.redirect;
 
-                    // window.location.replace(data.redirect);
+                    window.location.replace(data.redirect);
                 // } else {
 
                     // data.form contains the HTML for the replacement form
