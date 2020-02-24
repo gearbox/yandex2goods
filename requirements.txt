@@ -2,3 +2,4 @@ werkzeug
 flask
 xlrd
 msoffcrypto-tool
+gunicorn
