@@ -23,7 +23,7 @@ def index():
 
 @app.route('/out/<filename>')
 def serve_files(filename):
-    return send_from_directory(app.config['SERVED_FOLDER'], filename)
+    return send_from_directory(app.config['SERVED_FOLDER'], filename, mimetype='text/plain', as_attachment=True)
 
 
 @app.route('/convert-xls', methods=['POST'])
@@ -36,13 +36,14 @@ def convert_file():
     file = request.files['file']
     # if user does not select file, browser also submit an empty part without filename
     if file.filename == '':
-        flash('No selected file', 'warning')
+        flash('Не выбран ни один файл', 'warning')
         return redirect(url_for('index'))
     if not xls_to_xml.allowed_filetype(file.filename):
-        flash('Not valid file', 'danger')
+        flash('Данный тип файлов не поддерживается', 'danger')
         return redirect(url_for('index'))
     filename = xls_to_xml.convert(file)
-    return redirect(url_for('serve_files', filename=filename.name))
+    # return redirect(url_for('serve_files', filename=filename.name))
+    return render_template('converted.html', filename=filename)
 
 
 if __name__ == '__main__':

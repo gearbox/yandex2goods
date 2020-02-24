@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>Finished!</div>
+<h1>Конвертация выполнена успешно</h1>
+<p>Скачайте сконвертировнный файл по ссылке ниже</p>
+<div class="row">
+            <div class="col">
+                <h3>XML файл для Goods.ru</h3>
+                <a href="{{ url_for('serve_files', filename=filename.name) }}">Скачать {{ filename.name }}</a>
+            </div>
+</div>
 {% endblock %}
