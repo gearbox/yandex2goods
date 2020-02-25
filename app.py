@@ -16,15 +16,14 @@ app.config['SERVED_FOLDER'] = SERVED_FOLDER
 app.secret_key = "my super duper mega secret key"
 
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(app.config['SERVED_FOLDER'],
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+# @app.route('/favicon.ico')
+# def favicon():
+#     return send_from_directory(app.config['SERVED_FOLDER'], 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @app.route('/out/<filename>')
@@ -53,5 +52,5 @@ def convert_file():
 
 
 if __name__ == '__main__':
-    # app.debug = True
+    app.debug = True
     app.run()
