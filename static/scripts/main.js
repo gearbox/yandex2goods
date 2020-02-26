@@ -1,6 +1,9 @@
 $(function() {
+    let links = [],
+        files = [];
     $('#upload-file-btn').click(function() {
         let form_data = new FormData($('#upload-file')[0]);
+        let file = document.getElementById('file').files[0];
         let ins = document.getElementById('file').files.length;
         if(ins === 0) {
 					$('#status-message').html(
@@ -9,6 +12,8 @@ $(function() {
                         '        Не выбран ни один файл.</div>');
 					return;
 				}
+        let item = JSON.stringify([file.name, file.lastModifiedDate]);
+        if(files.includes(item)){return;} else {files.push(item);}
         $.ajax({
             type: 'POST',
             url: '/convert-xls', // point to server-side URL
@@ -27,20 +32,12 @@ $(function() {
                 $.each(response, function (key, data) {
                     if (data === 'success') {
                         $('#conv-result').html('<h3>XML для Goods.ru:</h3>');
-                        $('#download-links').append(
-                            '<a href="' + response.link + '">Скачать ' + response.filename + '</a><br/>'
-                        );
-                        // $('#download-links a').each(
-                            // function () {
-                                // let links = this.attr('href');
-                                // for (let i = 0, len = links.length; i < len; i++) {
-                                //     if (location.href.search(this.attr('href')) !== $('a').attr('href')) {
-                                //         $('#download-links').append(
-                                //             '<a href="' + response.link + '">Скачать ' + response.filename + '</a><br/>'
-                                //         );
-                                //     }
-                                // }
-                            // })
+                        if (!links.includes(response.link)) {
+                            links.push(response.link);
+                            $('#download-links').append(
+                                '<a href="' + response.link + '">Скачать ' + response.filename + '</a><br/>'
+                            );
+                        }
                     }
                 });
                 console.log(response);
@@ -54,6 +51,6 @@ $(function() {
                 );
                 console.log(error);
             }
-        });
-    });
+        })
+    })
 });
