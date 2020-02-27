@@ -1,27 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-        <h1> Яндекс.Маркет XLS в XML в формате Goods.ru</h1>
-        <p>Конвертируем XLS файл, выгруженный из Яндекс.Маркет в XML файл в формате Goods.ru.</p>
-        <!-- HTML provided in the following sections goes here. -->
-        <div class="row">
-            <div class="col">
-                <form id="upload-file" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <fieldset>
-                            <legend>Загрузите XLS файл</legend>
-                            <label for="file">Выберите файл</label>
-                            <input class="form-control" id="file" name="file" type="file">
-                            <br>
-                            <button class="btn btn-primary mb-2" id="upload-file-btn" type="button">Конвертировать</button>
-                        </fieldset>
-                    </div>
-                </form>
-                <div>
-                    <div id="conv-result"></div>
-                    <div id="download-links"></div>
-                </div>
-            </div>
+    <h1>Яндекс.Маркет XLS в XML в формате Goods.ru</h1>
+    <p>Конвертируем XLS файл, выгруженный из Яндекс.Маркет в XML формата Goods.ru.</p>
+    <p>У нас все просто, как <i>1, 2, 3</i>:</p>
+    <form id="upload-file" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <fieldset>
+                <h4>1. Загрузите XLS или XLSX файл</h4>
+                <input class="form-control" id="file" name="file" type="file">
+                <p></p>
+                <h4>2. Нажмите кнопку</h4>
+                <button class="btn btn-primary mb-2" id="upload-file-btn" type="button">Конвертировать</button>
+            </fieldset>
         </div>
-        <!-- End -->
+    </form>
+    <div id="conv-result"></div>
+    <div id="download-links"></div>
 {% endblock %}

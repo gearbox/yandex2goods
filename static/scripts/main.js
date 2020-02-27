@@ -16,8 +16,8 @@ $(function() {
         if(files.includes(item)){return;} else {files.push(item);}
         $.ajax({
             type: 'POST',
-            url: '/convert-xls', // point to server-side URL
-            dataType: 'json', // what to expect back from server
+            url: '/convert-xls',
+            dataType: 'json',
             data: form_data,
             contentType: false,
             cache: false,
@@ -31,7 +31,7 @@ $(function() {
                 );
                 $.each(response, function (key, data) {
                     if (data === 'success') {
-                        $('#conv-result').html('<h3>XML для Goods.ru:</h3>');
+                        $('#conv-result').html('<h4>3. Скачайте XML для Goods.ru:</h4>');
                         if (!links.includes(response.link)) {
                             links.push(response.link);
                             $('#download-links').append(
@@ -40,16 +40,16 @@ $(function() {
                         }
                     }
                 });
-                console.log(response);
+                // console.log(response);
                 },
-            error: function(error) {
+            error: function(response) {
                 $('#status-message').html(
-                    '<div class="alert alert-' + error.responseText.type + ' alert-dismissible" role="alert">' +
+                    '<div class="alert alert-danger alert-dismissible" role="alert">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">&times;</span></button>' +
-                    error.responseText.message + '</div>'
+                    response.message + '</div>'
                 );
-                console.log(error);
+                // console.log(response);
             }
         });
     });
