@@ -117,7 +117,9 @@ def convert(file=None):
     project_dir_path = Path(__file__).parent
     project_input_dir = project_dir_path / 'static' / 'in'
     project_input_dir = project_input_dir if project_input_dir.is_dir() else project_dir_path
-    project_results_dir = project_dir_path / 'static' / 'out'
+    project_static_dir = project_dir_path / 'static'
+    Path(project_static_dir).mkdir(exist_ok=True)
+    project_results_dir = project_static_dir / 'out'
     Path(project_results_dir).mkdir(exist_ok=True)
 
     files_grabbed = []
@@ -127,7 +129,7 @@ def convert(file=None):
         files_grabbed.append(file)
     # print(files_grabbed)
 
-    output_xml = project_results_dir
+    output_xml = project_results_dir / 'result.xml'
     for f in files_grabbed:
         # print('*F File Type: ', type(f))
         output_xml = project_results_dir / ((f.name.split('.')[0] if isinstance(f, Path) else
