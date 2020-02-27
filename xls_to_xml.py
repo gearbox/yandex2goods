@@ -112,6 +112,7 @@ def convert(file=None):
 
     project_dir_path = Path(__file__).parent
     project_input_dir = project_dir_path / 'static' / 'in'
+    project_input_dir = project_input_dir if project_input_dir.is_dir() else project_dir_path
     project_results_dir = project_dir_path / 'static' / 'out'
     Path(project_results_dir).mkdir(exist_ok=True)
 
