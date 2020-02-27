@@ -10,6 +10,9 @@ from werkzeug.utils import secure_filename
 # Allowed file types without "."
 ALLOWED_TYPES = {'xls', 'xlsx'}
 
+# Valid XML declaration
+XML_DECLARATION = b'<?xml version="1.0" encoding="UTF-8"?>\n'
+
 
 # Indent XML into a beautified format
 def indent(elem, level=0):
@@ -33,7 +36,7 @@ def verify_input(text: str):
         replace('<', '&lt;').replace('\'', '&apos;')
 
 
-def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict):
+def build_tree(worksheet, shop_info: dict, categories: dict):
     catalogue = ET.Element('yml_catalog', date=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M')))
     shop = ET.SubElement(catalogue, 'shop')
     ET.SubElement(shop, 'name').text = shop_info['name']
@@ -63,7 +66,8 @@ def build_tree(file_name: Path, worksheet, shop_info: dict, categories: dict):
     indent(catalogue)
 
     tree = ET.ElementTree(catalogue)
-    tree.write(file_name, xml_declaration=True, encoding='utf-8', method="xml")
+    # tree.write(file_name, xml_declaration=True, encoding="UTF-8", method="xml")
+    return tree
 
 
 def allowed_filetype(filename):
@@ -123,15 +127,17 @@ def convert(file=None):
         files_grabbed.append(file)
     # print(files_grabbed)
 
-    output_xml = ''
+    output_xml = project_results_dir
     for f in files_grabbed:
         # print('*F File Type: ', type(f))
         output_xml = project_results_dir / ((f.name.split('.')[0] if isinstance(f, Path) else
                                              secure_filename(f.filename).rsplit('.', 1)[0]) + '.xml')
-        # f.filename.rsplit('.', 1)[0]) + '.xml')
         sheet = read_xls_sheet(f)
         if sheet.nrows > 2:
-            build_tree(output_xml, sheet, shop_information, product_categories)
+            tree = build_tree(sheet, shop_information, product_categories)
+            with open(str(output_xml), 'wb') as file:
+                file.write(XML_DECLARATION)
+                tree.write(file, xml_declaration=False, encoding="UTF-8", method="xml")
     return output_xml
 
 
