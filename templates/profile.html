@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Company profile{% endblock %}
+
+{% block content %}
+    <h1>Заполните информацию о компании</h1>
+    <p>Пожалуйста, заполните информацию о своей компании. Эта информация нужна для формирования XML-файла.</p>
+{#    <form id="company-profile" method="post" enctype="multipart/form-data">#}
+{#        <div class="form-group">#}
+{#            <fieldset>#}
+{#                <legend>Введите данные о компании</legend>#}
+{#                <label for="company-name">Название компании</label>#}
+{#                <input class="form-control" id="company-name" name="company-name" type="text"#}
+{#                       placeholder="ООО &laquo;Моя компания&raquo;" required autofocus>#}
+{#                <label for="shop-name">Название магазина</label>#}
+{#                <input class="form-control" id="shop-name" name="shop-name" type="text"#}
+{#                       placeholder="Чудеса света" required>#}
+{#                <label for="shop-url">URL магазина</label>#}
+{#                <input class="form-control" id="shop-url" name="shop-url" type="text"#}
+{#                       placeholder="https://www.chudesa-sveta.ru" required>#}
+{#                <label for="shop-currency">Принимаемая валюта</label>#}
+{#                <input class="form-control" id="shop-currency" name="shop-currency" type="text">#}
+{#                <label for="shop-outlet">ID Склада</label>#}
+{#                <input class="form-control" id="shop-outlet" name="shop-outlet" type="text">#}
+{#                <p></p>#}
+{#                <button class="btn btn-primary mb-2" id="confirm-profile-info" type="button">Сохранить</button>#}
+{#            </fieldset>#}
+{#        </div>#}
+{#    </form>#}
+    <div class="form-group">
+        <form method="POST" action="/profile">
+            <fieldset>
+                <legend>Введите данные о компании</legend>
+                <div class="form-group" style="position: relative">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", placeholder="sales@chudesa-sveta.ru") }}
+                    {% if form.email.errors %}
+                        <ul class="invalid-tooltip" style="display: block;">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.company_name.label }}
+                    {{ form.company_name(class="form-control", placeholder="ООО \"Моя компания\"") }}
+                </div>
+                <div class="form-group">
+                    {{ form.shop_name.label }}
+                    {{ form.shop_name(class="form-control", placeholder="Чудеса света") }}
+                </div>
+                <div class="form-group" style="position: relative">
+                    {{ form.shop_url.label }}
+                    {{ form.shop_url(class="form-control", placeholder="https://www.chudesa-sveta.ru") }}
+                </div>
+                <div class="form-group">
+                    {{ form.shop_currency.label }}
+                    {{ form.shop_currency(class="form-control", placeholder="") }}
+                </div>
+                <div class="form-group">
+                    {{ form.shop_outlet.label }}
+                    {{ form.shop_outlet(class="form-control", placeholder="") }}
+                </div>
+                {{ form.submit(class="btn btn-primary mb-2") }}
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type = "text/javascript" src ="{{ url_for('static', filename='/scripts/profile.js', v='1') }}"></script>
+{% endblock %}

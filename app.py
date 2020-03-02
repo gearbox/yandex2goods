@@ -1,19 +1,24 @@
-from flask import Flask, render_template, request, url_for, jsonify  # , redirect, flash
-from flask import send_from_directory
+from flask import Flask, render_template, request, url_for, jsonify, redirect  # , flash
+from flask import send_from_directory  # , make_response
+from config import DevConfig
 
 import xls_to_xml
+import forms
 
-SERVED_FOLDER = 'static/out'
-
+# SERVED_FOLDER = 'static/out'
+# app = Flask(__name__, instance_relative_config=False)
 app = Flask(
     __name__,
     static_url_path='',
     static_folder='static',
-    template_folder='templates'
+    template_folder='templates',
+    instance_relative_config=False
 )
-app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
-app.config['SERVED_FOLDER'] = SERVED_FOLDER
-app.secret_key = "my super duper mega secret key"
+app.config.from_object(DevConfig())
+# app.config.from_envvar('APP_CONFIG')
+# app.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
+# app.config['SERVED_FOLDER'] = SERVED_FOLDER
+# app.secret_key = "my super duper mega secret key"
 
 
 @app.route('/')
@@ -58,6 +63,47 @@ def convert_file():
     return render_template('converted.html', filename=filename)
 
 
+# @login_required
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    form = forms.CompanyProfile()
+    if form.validate_on_submit():
+        return redirect(url_for('success'))
+    return render_template('profile.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = forms.Login()
+    if form.validate_on_submit():
+        return redirect(url_for('success'))
+    return render_template('login.html', form=form)
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    signup_form = forms.SignUp(request.form)
+    if request.method == 'POST':
+        if signup_form.validate():
+            email = request.form.get('email')
+            password = request.form.get('password')
+            # existing_user = User.query.filter_by(email=email).first()
+            # if existing_user is None:
+            #     user = User(email=email, password=generate_password_hash(password, method='sha256'))
+            #     db.session.add(user)
+            #     db.session.commit()
+            #     login_user(user)
+            #     return redirect(url_for('index'))
+            # flash('A user already exists with that email address.')
+            return redirect(url_for('login'))
+    return render_template('signup.html', form=signup_form)
+
+
+# @app.errorhandler(404)
+# def not_found():
+#     """Page not found."""
+#     return make_response(render_template("404.html"), 404)
+
+
 if __name__ == '__main__':
-    app.debug = False
     app.run()

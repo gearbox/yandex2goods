@@ -5,8 +5,8 @@
     <h1>Яндекс.Маркет XLS в XML в формате Goods.ru</h1>
     <p>Конвертируем XLS файл, выгруженный из Яндекс.Маркет в XML формата Goods.ru.</p>
     <p>У нас все просто, как <i>1, 2, 3</i>:</p>
-    <form id="upload-file" method="post" enctype="multipart/form-data">
-        <div class="form-group">
+    <div class="form-group">
+        <form id="upload-file" method="post" enctype="multipart/form-data">
             <fieldset>
                 <h4>1. Загрузите XLS или XLSX файл</h4>
                 <input class="form-control" id="file" name="file" type="file">
@@ -14,8 +14,12 @@
                 <h4>2. Нажмите кнопку</h4>
                 <button class="btn btn-primary mb-2" id="upload-file-btn" type="button">Конвертировать</button>
             </fieldset>
-        </div>
-    </form>
+        </form>
+    </div>
     <div id="conv-result"></div>
     <div id="download-links"></div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type = "text/javascript" src ="{{ url_for('static', filename='/scripts/index.js', v='15') }}"></script>
 {% endblock %}
