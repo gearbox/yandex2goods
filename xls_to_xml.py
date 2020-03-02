@@ -63,6 +63,9 @@ def build_tree(worksheet, shop_info: dict, categories: dict):
         ET.SubElement(offer, 'picture').text = product[14]
         ET.SubElement(offer, 'vendor').text = verify_input(product[8])
         ET.SubElement(offer, 'description').text = verify_input(product[15])
+        outlets = ET.SubElement(offer, 'outlets')
+        for outlet in shop_info['outlets']:
+            ET.SubElement(outlets, 'outlet', id=str(outlet['id']), instock=str(outlet['instock']))
     indent(catalogue)
 
     tree = ET.ElementTree(catalogue)
@@ -111,6 +114,9 @@ def convert(file=None):
         'url': 'https://vitavim.ru/',
         'currencies': [
             {'RUR': '1'}
+        ],
+        'outlets': [
+            {'id': 1, 'instock': 9999999}
         ]
     }
 
