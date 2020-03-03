@@ -121,11 +121,9 @@ def convert(file=None):
     }
 
     project_dir_path = Path(__file__).parent
-    project_input_dir = project_dir_path / 'static' / 'in'
+    project_input_dir = project_dir_path / 'in'
     project_input_dir = project_input_dir if project_input_dir.is_dir() else project_dir_path
-    project_static_dir = project_dir_path / 'static'
-    Path(project_static_dir).mkdir(exist_ok=True)
-    project_results_dir = project_static_dir / 'out'
+    project_results_dir = project_dir_path / 'converted'
     Path(project_results_dir).mkdir(exist_ok=True)
 
     files_grabbed = []

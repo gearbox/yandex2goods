@@ -16,7 +16,7 @@ $(function() {
         if(files.includes(item)){return;} else {files.push(item);}
         $.ajax({
             type: 'POST',
-            url: '/convert-xls',
+            url: '/convert',
             dataType: 'json',
             data: form_data,
             contentType: false,
