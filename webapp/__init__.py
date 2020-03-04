@@ -25,4 +25,7 @@ def create_app():
         app.register_blueprint(main_routes.main_bp)
         app.register_blueprint(profile_routes.profile_bp)
 
+        # Create tables for our models
+        db.create_all()
+
         return app
