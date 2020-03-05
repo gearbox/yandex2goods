@@ -3,6 +3,7 @@ from datetime import datetime as dt
 # from flask import current_app as app
 from .models import db, User
 from . import forms
+from . import auth
 
 # Set up a Blueprint
 auth_bp = Blueprint('auth_bp', __name__,
@@ -31,6 +32,7 @@ def signup():
         email = request.form.get('email')
         print('*EMAIL: ', email)
         password = request.form.get('password')
+        password = auth.hash_password(password)
         if email and password:
             existing_user = User.query.filter(User.email == email).first()
             # existing_user = User.query.filter_by(email=email).first()
