@@ -1,6 +1,7 @@
 wtforms
 werkzeug
 flask
+flask-sqlalchemy
 xlrd
 msoffcrypto-tool
 gunicorn
