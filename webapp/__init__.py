@@ -13,7 +13,7 @@ def create_app():
     """Initialize the core application."""
     app = Flask(__name__, static_url_path='', static_folder='static', template_folder='templates',
                 instance_relative_config=False)
-    app.config.from_object(config.DevConfig())
+    app.config.from_object(config.ProdConfig())
 
     # Initialize Plugins
     db.init_app(app)

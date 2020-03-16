@@ -5,7 +5,6 @@ from os import environ
 class Config:
     """Set Flask default configuration vars."""
     SESSION_COOKIE_NAME = 'lgn'
-    # SESSION_COOKIE_NAME = environ.get('SESSION_COOKIE_NAME')
     SECRET_KEY = environ.get('SECRET_KEY')
     if not SECRET_KEY:
         raise ValueError('No SECRET_KEY set for Flask application')
@@ -23,10 +22,10 @@ class DevConfig(Config):
     FLASK_DEBUG = True
     DEBUG = True
     TESTING = True
-    # DATABASE_URI = environ.get('DEV_DATABASE_URI')
-    # if not DATABASE_URI:
-    #     raise ValueError('No DATABASE_URI set for Flask application')
+    # SQLA: [DB_TYPE]+[DB_CONNECTOR]://[USERNAME]:[PASSWORD]@[HOST]:[PORT]/[DB_NAME]
     SQLALCHEMY_DATABASE_URI = environ.get('DEV_SQLA_DATABASE_URI')
+    if not SQLALCHEMY_DATABASE_URI:
+        raise ValueError('No DATABASE_URI set for Flask application')
     SQLALCHEMY_ECHO = True
     # SQLALCHEMY_ENGINE_OPTIONS =
 
@@ -36,9 +35,6 @@ class ProdConfig(Config):
     FLASK_DEBUG = False
     DEBUG = False
     TESTING = False
-    DATABASE_URI = environ.get('PROD_DATABASE_URI')
-    # if not DATABASE_URI:
-    #     raise ValueError('No DATABASE_URI set for Flask application')
     SQLALCHEMY_DATABASE_URI = environ.get('PROD_SQLA_DATABASE_URI')
     SQLALCHEMY_ECHO = False
     # SQLALCHEMY_ENGINE_OPTIONS =
