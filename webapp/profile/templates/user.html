@@ -1,12 +1,9 @@
-{% extends 'base.html' %}
-
-{% block title %}All our users{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-    <h1>All users here:</h1>
-    {% for user in users %}
+    <h1>User: {{ user.email }}</h1>
+    <hr>
     <ul>
-        <li>User email: {{ user.email }}</li>
         <li>User password: {{ user.password }}</li>
         <li>Company: {{ user.company_name }}</li>
         <li>Shop: {{ user.shop_name }}</li>
@@ -14,5 +11,5 @@
 {#        <li>Active: {{ user.active }}</li>#}
 {#        <li>Admin: {{ user.admin }}</li>#}
     </ul>
-    {% endfor %}
+
 {% endblock %}

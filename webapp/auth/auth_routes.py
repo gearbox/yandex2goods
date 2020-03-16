@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, url_for, redirect, make_response
 from flask_login import login_required, logout_user, current_user, login_user
-# from datetime import datetime as dt
+from datetime import datetime as dt
 # from flask import current_app as app
-from .models import db, User
+from webapp.models import db, User
 from .forms import Login, SignUp
-from .. import login_manager
+from webapp import login_manager
 # from . import auth
 
 # Set up a Blueprint
@@ -50,7 +50,8 @@ def signup():
             if existing_user is None:
                 print('User is None, continue')
                 user = User(name=name,
-                            email=email)
+                            email=email,
+                            created_on=dt.now())
                 user.set_password(password)
                 db.session.add(user)
                 db.session.commit()  # Create new user
@@ -61,7 +62,9 @@ def signup():
     return render_template('signup.html', form=signup_form)
 
 
+# TODO: Limit access to Admin users only
 @auth_bp.route('/users', methods=['GET'])
+@login_required
 def show_users():
     users = User.query.all()
     return render_template('users.html', users=users)

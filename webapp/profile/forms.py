@@ -5,10 +5,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, URL  # , Length
 
 
 class CompanyProfile(FlaskForm):
-    email = StringField('Email', [
-        Email(message='Введите корректный email адрес'),
-        DataRequired(message='Это обязательное поле')
-    ])
+    email = StringField('Email')
     company_name = StringField('Название компании', [
         DataRequired(message='Это обязательное поле')
     ])
@@ -20,9 +17,9 @@ class CompanyProfile(FlaskForm):
         URL()
     ])
     shop_currency = StringField('Принимаемая валюта', [
-        DataRequired(message='Это обязательное поле')
+        # DataRequired(message='Это обязательное поле')
     ])
     shop_outlet = StringField('ID Склада', [
-        DataRequired(message='Это обязательное поле')
+        # DataRequired(message='Это обязательное поле')
     ])
     submit = SubmitField('Сохранить')

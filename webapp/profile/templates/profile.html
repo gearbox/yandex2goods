@@ -29,6 +29,7 @@
 {#    </form>#}
     <div class="form-group">
         <form method="POST" action="/profile">
+            {{ form.csrf_token }}
             <fieldset>
                 <legend>Введите данные о компании</legend>
                 <div class="form-group" style="position: relative">
