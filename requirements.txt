@@ -1,7 +1,11 @@
+# pyinstaller
+flask-wtf
 wtforms
 werkzeug
 flask
 flask-sqlalchemy
+flask-login
 xlrd
 msoffcrypto-tool
 gunicorn
+python-dotenv

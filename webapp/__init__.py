@@ -1,10 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 import config
 
 # Globally accessible libraries (Instances of Plugin Objects)
 db = SQLAlchemy()
+login_manager = LoginManager()
 
 
 def create_app():
@@ -15,6 +17,7 @@ def create_app():
 
     # Initialize Plugins
     db.init_app(app)
+    login_manager.init_app(app)
 
     with app.app_context():
         # Include our Routes and register blueprints

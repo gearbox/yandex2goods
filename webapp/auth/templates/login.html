@@ -8,6 +8,7 @@
 
 {#    <div class="form-group">#}
         <form method="POST" action="/login">
+            {{ form.csrf_token }}
             <fieldset>
             <div class="form-group" style="position: relative">
                 {{ form.email.label }}

@@ -33,7 +33,7 @@
                 <legend>Введите данные о компании</legend>
                 <div class="form-group" style="position: relative">
                     {{ form.email.label }}
-                    {{ form.email(class="form-control", placeholder="sales@chudesa-sveta.ru") }}
+                    {{ form.email(class="form-control", placeholder=current_user.email, disabled=True) }}
                     {% if form.email.errors %}
                         <ul class="invalid-tooltip" style="display: block;">
                             {% for error in form.email.errors %}

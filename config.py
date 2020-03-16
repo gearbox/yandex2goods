@@ -15,7 +15,7 @@ class Config:
     SERVED_FOLDER = 'converted'
     MAX_CONTENT_LENGTH = 6 * 1024 * 1024
     # DATABASE_URI = 'sqlite:///:memory:'
-    SQLALCHEMY_TRACK_MODIFICATIONS = environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class DevConfig(Config):

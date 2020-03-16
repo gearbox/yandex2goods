@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, url_for, redirect, make_response
-from datetime import datetime as dt
+from flask_login import login_required, logout_user, current_user, login_user
+# from datetime import datetime as dt
 # from flask import current_app as app
 from .models import db, User
-from . import forms
-from . import auth
+from .forms import Login, SignUp
+from .. import login_manager
+# from . import auth
 
 # Set up a Blueprint
 auth_bp = Blueprint('auth_bp', __name__,
@@ -14,50 +16,48 @@ auth_bp = Blueprint('auth_bp', __name__,
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    form = forms.Login()
-    if form.validate_on_submit():
-        return redirect(url_for('success'))
-    return render_template('login.html', form=form)
+    if current_user.is_authenticated:
+        return redirect(url_for('main_bp.index'))  # Bypass if user is logged in
+    login_form = Login()
+    if request.method == 'POST':
+        if login_form.validate_on_submit():
+            email = login_form.email.data
+            password = login_form.password.data
+            user = User.query.filter_by(email=email).first()  # Validate Login Attempt
+            if user and user.check_password(password=password):
+                login_user(user)
+                next_page = request.args.get('next')
+                return redirect(next_page or url_for('main_bp.index'))
+                # return redirect(url_for('success'))
+    return render_template('login.html', form=login_form)
 
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
-    signup_form = forms.SignUp(request.form)
+    signup_form = SignUp()
     if request.method == 'POST':
         print('POST')
-        if signup_form.validate():
-            print('Valid!')
-        else:
-            print('Not Valid!')
-        email = request.form.get('email')
-        print('*EMAIL: ', email)
-        password = request.form.get('password')
-        password = auth.hash_password(password)
-        if email and password:
-            existing_user = User.query.filter(User.email == email).first()
-            # existing_user = User.query.filter_by(email=email).first()
-            if existing_user:
-                return make_response(f'User with email: {email} already exists!')
-            new_user = User(username=None,
-                            email=email,
-                            password=password,
-                            bio=None,
-                            created=dt.now(),
-                            active=False,
-                            active_since=None,
-                            admin=False)
-            db.session.add(new_user)
-            db.session.commit()
-        # if existing_user is None:
-        #     user = User(email=email, password=generate_password_hash(password, method='sha256'))
-        #     db.session.add(user)
-        #     db.session.commit()
-        #     login_user(user)
-        #     return redirect(url_for('index'))
-        # flash('A user already exists with that email address.')
-        # return redirect(url_for('login'))
-            return make_response(f'{new_user} successfully created!')
-        print('GET')
+        print(request.form)
+        print(signup_form.errors)
+        if signup_form.validate_on_submit():
+            print('Valid, continue')
+            name = signup_form.name.data
+            email = signup_form.email.data
+            password = signup_form.password.data
+            existing_user = User.query.filter_by(email=email).first()  # Check if user exists
+            # existing_user = User.query.filter(User.email == email).first()
+
+            if existing_user is None:
+                print('User is None, continue')
+                user = User(name=name,
+                            email=email)
+                user.set_password(password)
+                db.session.add(user)
+                db.session.commit()  # Create new user
+                login_user(user)  # Log in as newly created user
+                return redirect(url_for('profile_bp.profile'))
+            # return make_response(f'User with email: {email} already exists!')
+
     return render_template('signup.html', form=signup_form)
 
 
@@ -65,3 +65,25 @@ def signup():
 def show_users():
     users = User.query.all()
     return render_template('users.html', users=users)
+
+
+@auth_bp.route('/logout')
+@login_required
+def logout():
+    """User log-out logic."""
+    logout_user()
+    return redirect(url_for('auth_bp.login'))
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Check if user is logged-in on every page load."""
+    if user_id is not None:
+        return User.query.get(user_id)
+    return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page. You must be logged in to view that page."""
+    return redirect(url_for('auth_bp.login'))

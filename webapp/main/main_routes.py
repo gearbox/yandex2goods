@@ -1,6 +1,7 @@
 """Routes for main pages"""
 from flask import Blueprint, render_template, send_from_directory, request, jsonify, url_for
 from flask import current_app as app
+from flask_login import login_required
 
 import xls_to_xml
 
@@ -12,7 +13,8 @@ main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',)
 
 
-@main_bp.route('/')
+@main_bp.route('/', methods=['GET'])
+@login_required
 def index():
     return render_template('index.html')
 
