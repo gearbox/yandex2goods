@@ -1,8 +1,8 @@
 from webapp import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import class_mapper, ColumnProperty
-from sqlalchemy import inspect
+# from sqlalchemy.orm import class_mapper, ColumnProperty
+from flask_sqlalchemy import inspect
 
 
 class User(UserMixin, db.Model):
@@ -39,8 +39,9 @@ class User(UserMixin, db.Model):
         """Return the actual columns of a SQLAlchemy-mapped object"""
         # return [prop.key for prop in class_mapper(self.__class__).iterate_properties
         #         if isinstance(prop, ColumnProperty)]
-        return [prop.key for prop in inspect(self.__class__).iterate_properties
-                if isinstance(prop, ColumnProperty)]
+        # return [prop.key for prop in inspect(self.__class__).iterate_properties
+        #         if isinstance(prop, ColumnProperty)]
+        return [prop.key for prop in inspect(self.__class__).iterate_properties]
 
     def __repr__(self):
         return f'<User {self.username}>'
