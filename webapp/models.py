@@ -52,6 +52,7 @@ class Currency(db.Model):
     __tablename__ = 'currencies'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(3), nullable=False)
+    rate = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('flasklogin-users.id'), nullable=False)
 
     def __repr__(self):

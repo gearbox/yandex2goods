@@ -22,7 +22,7 @@ def profile():
             current_user.shop_name = form.shop_name.data
             current_user.shop_url = form.shop_url.data
             # current_user.shop_currency = form.shop_currency.data
-            currency = Currency(name=form.shop_currency.data, user_id=current_user.id)
+            currency = Currency(name=form.shop_currency.data, rate=form.currency_rate.data, user_id=current_user.id)
             # current_user.shop_outlet = form.shop_outlet.data
             db.session.add(currency)
             db.session.commit()
@@ -32,6 +32,7 @@ def profile():
         form.shop_name.data = current_user.shop_name
         form.shop_url.data = current_user.shop_url
         form.shop_currency.data = current_user.shop_currency
+        # form.currency_rate.data = current_user.
         form.shop_outlet.data = current_user.shop_outlet
     return render_template('profile.html', form=form)
 
