@@ -21,7 +21,6 @@ def profile():
             current_user.company_name = form.company_name.data
             current_user.shop_name = form.shop_name.data
             current_user.shop_url = form.shop_url.data
-            # current_user.shop_currency = form.shop_currency.data
             currency = Currency(name=form.shop_currency.data, rate=form.currency_rate.data, user_id=current_user.id)
             # current_user.shop_outlet = form.shop_outlet.data
             db.session.add(currency)
