@@ -1,6 +1,8 @@
 from webapp import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import class_mapper, ColumnProperty
+from sqlalchemy import inspect
 
 
 class User(UserMixin, db.Model):
@@ -32,6 +34,13 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         """Check hashed password."""
         return check_password_hash(self.password, password)
+
+    def columns(self):
+        """Return the actual columns of a SQLAlchemy-mapped object"""
+        # return [prop.key for prop in class_mapper(self.__class__).iterate_properties
+        #         if isinstance(prop, ColumnProperty)]
+        return [prop.key for prop in inspect(self.__class__).iterate_properties
+                if isinstance(prop, ColumnProperty)]
 
     def __repr__(self):
         return f'<User {self.username}>'

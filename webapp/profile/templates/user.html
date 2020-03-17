@@ -8,8 +8,11 @@
         <li>Company: {{ user.company_name }}</li>
         <li>Shop: {{ user.shop_name }}</li>
         <li>Created: {{ user.created_on }}</li>
-{#        <li>Active: {{ user.active }}</li>#}
-{#        <li>Admin: {{ user.admin }}</li>#}
+    </ul>
+    <ul>
+    {% for field in user.columns() %}
+        <li>{{ field }}: {{ user[field] }}</li>
+    {% endfor %}
     </ul>
 
 {% endblock %}
