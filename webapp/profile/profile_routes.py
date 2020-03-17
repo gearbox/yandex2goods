@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from .forms import CompanyProfile
 
-from webapp.models import db, User
+from webapp.models import db, User, Currency
 
 # Set up a Blueprint
 profile_bp = Blueprint('profile_bp', __name__,
@@ -22,7 +22,9 @@ def profile():
             current_user.shop_name = form.shop_name.data
             current_user.shop_url = form.shop_url.data
             # current_user.shop_currency = form.shop_currency.data
+            currency = Currency(name=form.shop_currency.data, user_id=current_user.id)
             # current_user.shop_outlet = form.shop_outlet.data
+            db.session.add(currency)
             db.session.commit()
             return redirect(url_for('profile_bp.profile'))
     else:
