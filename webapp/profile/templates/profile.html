@@ -24,14 +24,35 @@
                 <div class="form-group">
                     {{ form.shop_name.label }}
                     {{ form.shop_name(class="form-control", placeholder="Чудеса света") }}
+                    {% if form.shop_name.errors %}
+                        <ul class="invalid-tooltip" style="display: block;">
+                            {% for error in form.shop_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.company_name.label }}
                     {{ form.company_name(class="form-control", placeholder="ООО \"Моя компания\"") }}
+                    {% if form.company_name.errors %}
+                        <ul class="invalid-tooltip" style="display: block;">
+                            {% for error in form.company_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
                 <div class="form-group" style="position: relative">
                     {{ form.shop_url.label }}
                     {{ form.shop_url(class="form-control", placeholder="https://www.chudesa-sveta.ru") }}
+                    {% if form.shop_url.errors %}
+                        <ul class="invalid-tooltip" style="display: block;">
+                            {% for error in form.shop_url.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
 {#                <div class="form-row">#}
 {#                    <div class="form-group col-md-6">#}

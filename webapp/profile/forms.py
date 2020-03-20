@@ -1,7 +1,14 @@
 from flask_wtf import FlaskForm
 # from flask_login import current_user
 from wtforms import StringField, SubmitField  # , PasswordField, TextField
-from wtforms.validators import DataRequired, URL  # , Email, EqualTo, Length
+# from wtforms.fields.html5 import URLField
+# from wtforms.widgets.html5 import URLInput
+from wtforms.validators import DataRequired, url  # , URL  # , Email, EqualTo, Length
+
+
+def validate_url(form, field):
+    if not field.data.startswith('http'):
+        field.data = 'http://' + field.data
 
 
 class CompanyProfile(FlaskForm):
@@ -14,7 +21,8 @@ class CompanyProfile(FlaskForm):
     ])
     shop_url = StringField('URL магазина', [
         DataRequired(message='Это обязательное поле'),
-        # URL()
+        validate_url,
+        url(message='URL адрес указан с ошибкой'),
     ])
     # shop_currency = StringField('Принимаемая валюта', [
     #     DataRequired(message='Это обязательное поле')
