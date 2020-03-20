@@ -6,7 +6,7 @@ from wtforms import StringField, SubmitField  # , PasswordField, TextField
 from wtforms.validators import DataRequired, url  # , URL  # , Email, EqualTo, Length
 
 
-def validate_url(form, field):
+def validate_url(_form, field):
     if not field.data.startswith('http'):
         field.data = 'http://' + field.data
 
