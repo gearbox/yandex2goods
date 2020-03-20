@@ -11,7 +11,8 @@ from webapp import login_manager
 auth_bp = Blueprint('auth_bp', __name__,
                     static_url_path='',
                     static_folder='static',
-                    template_folder='templates',)
+                    template_folder='templates',
+                    )
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -49,8 +50,7 @@ def signup():
 
             if existing_user is None:
                 print('User is None, continue')
-                user = User(name=name,
-                            email=email,
+                user = User(email=email,
                             created_on=dt.now())
                 user.set_password(password)
                 db.session.add(user)

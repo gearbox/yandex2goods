@@ -5,7 +5,53 @@
 {% block content %}
     <h1>Заполните информацию о компании</h1>
     <p>Пожалуйста, заполните информацию о своей компании. Эта информация нужна для формирования XML-файла.</p>
-{#    <form id="company-profile" method="post" enctype="multipart/form-data">#}
+    <div class="form-group">
+        <form method="POST" action="/profile">
+            {{ form.csrf_token }}
+            <fieldset>
+                <legend>Введите данные о компании</legend>
+                <div class="form-group" style="position: relative">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", value=current_user.email, readonly=True) }}
+                    {% if form.email.errors %}
+                        <ul class="invalid-tooltip" style="display: block;">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.shop_name.label }}
+                    {{ form.shop_name(class="form-control", placeholder="Чудеса света") }}
+                </div>
+                <div class="form-group">
+                    {{ form.company_name.label }}
+                    {{ form.company_name(class="form-control", placeholder="ООО \"Моя компания\"") }}
+                </div>
+                <div class="form-group" style="position: relative">
+                    {{ form.shop_url.label }}
+                    {{ form.shop_url(class="form-control", placeholder="https://www.chudesa-sveta.ru") }}
+                </div>
+{#                <div class="form-row">#}
+{#                    <div class="form-group col-md-6">#}
+{#                        {{ form.shop_currency.label }}#}
+{#                        {{ form.shop_currency(class="form-control", placeholder="") }}#}
+{#                    </div>#}
+{#                    <div class="form-group col-md-6">#}
+{#                        {{ form.currency_rate.label }}#}
+{#                        {{ form.currency_rate(class="form-control", placeholder="") }}#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="form-group">#}
+{#                    {{ form.shop_outlet.label }}#}
+{#                    {{ form.shop_outlet(class="form-control", placeholder="") }}#}
+{#                </div>#}
+                {{ form.submit(class="btn btn-primary mb-2") }}
+            </fieldset>
+        </form>
+    </div>
+    {#    <form id="company-profile" method="post" enctype="multipart/form-data">#}
 {#        <div class="form-group">#}
 {#            <fieldset>#}
 {#                <legend>Введите данные о компании</legend>#}
@@ -27,50 +73,6 @@
 {#            </fieldset>#}
 {#        </div>#}
 {#    </form>#}
-    <div class="form-group">
-        <form method="POST" action="/profile">
-            {{ form.csrf_token }}
-            <fieldset>
-                <legend>Введите данные о компании</legend>
-                <div class="form-group" style="position: relative">
-                    {{ form.email.label }}
-                    {{ form.email(class="form-control", placeholder=current_user.email, disabled=True) }}
-                    {% if form.email.errors %}
-                        <ul class="invalid-tooltip" style="display: block;">
-                            {% for error in form.email.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.company_name.label }}
-                    {{ form.company_name(class="form-control", placeholder="ООО \"Моя компания\"") }}
-                </div>
-                <div class="form-group">
-                    {{ form.shop_name.label }}
-                    {{ form.shop_name(class="form-control", placeholder="Чудеса света") }}
-                </div>
-                <div class="form-group" style="position: relative">
-                    {{ form.shop_url.label }}
-                    {{ form.shop_url(class="form-control", placeholder="https://www.chudesa-sveta.ru") }}
-                </div>
-                <div class="form-group">
-                    {{ form.shop_currency.label }}
-                    {{ form.shop_currency(class="form-control", placeholder="") }}
-                </div>
-                <div class="form-group">
-                    {{ form.currency_rate.label }}
-                    {{ form.currency_rate(class="form-control", placeholder="") }}
-                </div>
-                <div class="form-group">
-                    {{ form.shop_outlet.label }}
-                    {{ form.shop_outlet(class="form-control", placeholder="") }}
-                </div>
-                {{ form.submit(class="btn btn-primary mb-2") }}
-            </fieldset>
-        </form>
-    </div>
 {% endblock %}
 
 {% block custom_js %}

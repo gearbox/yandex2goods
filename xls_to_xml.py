@@ -102,13 +102,13 @@ def read_xls_sheet(file):
     return wb.sheet_by_name(sheets[0]) if len(sheets) < 2 else wb.sheet_by_index(2)
 
 
-def convert(file=None):
+def convert(file=None, shop_information=None, product_categories=None):
     # Settings
     # Список категорий в формате {'name1': 'id1', 'name2': 'id2', etc}
-    product_categories = {'Суперфуды': '1', 'Масло растительное': '2', 'Витамины и минералы': '3'}
+    vita_categories = {'Суперфуды': '1', 'Масло растительное': '2', 'Витамины и минералы': '3'}
 
     # Информация о подключаемом магазине (компании)
-    shop_information = {
+    vita_shop = {
         'name': 'Vitavim',
         'company': 'ООО "Жизнь"',
         'url': 'https://vitavim.ru/',
@@ -119,6 +119,14 @@ def convert(file=None):
             {'id': 1, 'instock': 9999999}
         ]
     }
+
+    product_categories = vita_categories if product_categories is None else product_categories
+    if shop_information is None:
+        shop_information = vita_shop
+    elif shop_information['name'] == 'Vitavim':
+        shop_information = vita_shop
+    else:
+        shop_information = shop_information
 
     project_dir_path = Path(__file__).parent
     project_input_dir = project_dir_path / 'in'

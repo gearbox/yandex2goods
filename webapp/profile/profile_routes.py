@@ -1,15 +1,15 @@
 from flask import Blueprint, render_template, url_for, redirect, request
 from flask_login import login_required, current_user
 
+from webapp.models import db, User
 from .forms import CompanyProfile
-
-from webapp.models import db, User, Currency
 
 # Set up a Blueprint
 profile_bp = Blueprint('profile_bp', __name__,
                        static_url_path='',
                        static_folder='static',
-                       template_folder='templates', )
+                       template_folder='templates',
+                       )
 
 
 @profile_bp.route('/profile', methods=['GET', 'POST'])
@@ -18,21 +18,19 @@ def profile():
     form = CompanyProfile()
     if request.method == 'POST':
         if form.validate_on_submit():
-            current_user.company_name = form.company_name.data
             current_user.shop_name = form.shop_name.data
+            current_user.company_name = form.company_name.data
             current_user.shop_url = form.shop_url.data
-            currency = Currency(name=form.shop_currency.data, rate=form.currency_rate.data, user_id=current_user.id)
-            # current_user.shop_outlet = form.shop_outlet.data
-            db.session.add(currency)
+            # currency = Currency(name=form.shop_currency.data, rate=form.currency_rate.data, user_id=current_user.id)
+            # db.session.add(currency)
             db.session.commit()
             return redirect(url_for('profile_bp.profile'))
     else:
-        form.company_name.data = current_user.company_name
         form.shop_name.data = current_user.shop_name
+        form.company_name.data = current_user.company_name
         form.shop_url.data = current_user.shop_url
-        form.shop_currency.data = current_user.shop_currency
-        # form.currency_rate.data = current_user.
-        form.shop_outlet.data = current_user.shop_outlet
+        # form.shop_currency.data = current_user.shop_currencies
+        # form.shop_outlet.data = current_user.shop_outlets
     return render_template('profile.html', form=form)
 
 

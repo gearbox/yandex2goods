@@ -1,16 +1,16 @@
 """Routes for main pages"""
 from flask import Blueprint, render_template, send_from_directory, request, jsonify, url_for
 from flask import current_app as app
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 import xls_to_xml
-
 
 # Set up a Blueprint
 main_bp = Blueprint('main_bp', __name__,
                     static_url_path='',
                     static_folder='static',
-                    template_folder='templates',)
+                    template_folder='templates',
+                    )
 
 
 @main_bp.route('/', methods=['GET'])
@@ -19,7 +19,7 @@ def index():
     return render_template('index.html')
 
 
-@main_bp.route('/out/<filename>')
+@main_bp.route('/converted/<path:filename>')
 def serve_files(filename):
     return send_from_directory(app.config['SERVED_FOLDER'], filename, mimetype='text/plain', as_attachment=True)
 
@@ -44,7 +44,19 @@ def convert_file():
     if not xls_to_xml.allowed_filetype(file.filename):
         resp = jsonify({'message': 'Данный тип файлов не поддерживается.', 'type': 'danger'})
         return resp
-    filename = xls_to_xml.convert(file)
+    shop = {
+        'name': current_user.shop_name,
+        'company': current_user.company_name,
+        'url': current_user.shop_url,
+        'currencies': [
+            {'RUR': '1'}
+        ],
+        'outlets': [
+            {'id': 1, 'instock': 9999999}
+        ]
+    }
+    # categories = {}
+    filename = xls_to_xml.convert(file, shop_information=shop, product_categories=None)
     if filename:
         resp = jsonify({
             'message': 'Файл успешно сконвертирован.',

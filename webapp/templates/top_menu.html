@@ -5,21 +5,27 @@
     </button>
     <div class="navbar-collapse collapse w-100" id="nav">
         <ul class="nav navbar-nav ml-auto w-100 justify-content-end text-right">
-            {% if current_user.is_anonymous %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth_bp.signup') }}">Sign-Up</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('profile_bp.user_info', user_email=current_user.email) }}">Info</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('profile_bp.profile') }}">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth_bp.logout') }}">Logout</a>
-                </li>
-            {% endif %}
+        {% if current_user.is_anonymous %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth_bp.login') }}">Log In</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth_bp.signup') }}">Sign-Up</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('main_bp.index') }}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile_bp.user_info', user_email=current_user.email) }}">Info</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('profile_bp.profile') }}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth_bp.logout') }}">Logout</a>
+            </li>
+        {% endif %}
         </ul>
     </div>
 </nav>
