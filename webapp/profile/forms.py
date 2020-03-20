@@ -14,7 +14,7 @@ class CompanyProfile(FlaskForm):
     ])
     shop_url = StringField('URL магазина', [
         DataRequired(message='Это обязательное поле'),
-        URL()
+        # URL()
     ])
     # shop_currency = StringField('Принимаемая валюта', [
     #     DataRequired(message='Это обязательное поле')

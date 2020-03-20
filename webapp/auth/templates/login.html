@@ -4,9 +4,9 @@
 
 {% block content %}
     <h1>Войдите в ваш профиль</h1>
-    <p>Пожалуйста, введите ваши логин и пароль для доступа к профилю вашей компании.</p>
+    <p>Пожалуйста, введите ваши логин и пароль для доступа к функциям сервиса.</p>
 
-{#    <div class="form-group">#}
+    <div class="form-group">
         <form method="POST" action="/login">
             {{ form.csrf_token }}
             <fieldset>
@@ -24,9 +24,16 @@
             <div class="form-group" style="position: relative">
                 {{ form.password.label }}
                 {{ form.password(class="form-control") }}
+                {% if form.password.errors %}
+                    <ul class="invalid-tooltip" style="display: block;">
+                        {% for error in form.password.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
                 {{ form.submit(class="btn btn-primary mb-2") }}
             </fieldset>
         </form>
-{#    </div>#}
+    </div>
 {% endblock %}
