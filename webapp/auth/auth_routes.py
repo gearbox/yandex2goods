@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, url_for, redirect, make_response
+from flask import Blueprint, render_template, request, url_for, redirect  # , make_response
 from flask_login import login_required, logout_user, current_user, login_user
 from datetime import datetime as dt
 # from flask import current_app as app
@@ -42,7 +42,6 @@ def signup():
         print(signup_form.errors)
         if signup_form.validate_on_submit():
             print('Valid, continue')
-            name = signup_form.name.data
             email = signup_form.email.data
             password = signup_form.password.data
             existing_user = User.query.filter_by(email=email).first()  # Check if user exists
