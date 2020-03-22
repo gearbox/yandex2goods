@@ -8,6 +8,7 @@ project_dir = Path(__file__).parent
 
 class Config:
     """Set Flask default configuration vars."""
+    # FLASK_APP = 'Yandex2Goods'
     SESSION_COOKIE_NAME = 'lgn'
     SECRET_KEY = environ.get('SECRET_KEY')
     if not SECRET_KEY:
@@ -18,6 +19,8 @@ class Config:
     SERVED_FOLDER = project_dir / 'converted'
     MAX_CONTENT_LENGTH = 6 * 1024 * 1024
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Flask-Admin
+    FLASK_ADMIN_SWATCH = 'sandstone'
 
 
 class DevConfig(Config):

@@ -11,7 +11,6 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(40), index=True, unique=True, nullable=False)
-    password = db.Column(db.String(200), index=False, unique=False, nullable=False)
     #
     shop_name = db.Column(db.String(100), index=False, unique=False, nullable=True)
     company_name = db.Column(db.String(100), index=False, unique=False, nullable=True)
@@ -22,10 +21,31 @@ class User(UserMixin, db.Model):
     #
     created_on = db.Column(db.DateTime, index=False, unique=False, nullable=True)
     last_login = db.Column(db.DateTime, index=False, unique=False, nullable=True)
+    #
+    password = db.Column(db.String(200), index=False, unique=False, nullable=False)
     # bio = db.Column(db.Text, index=False, unique=False, nullable=True)
     # active = db.Column(db.Boolean, index=False, unique=False, nullable=False)
     # active_since = db.Column(db.DateTime, index=False, unique=False, nullable=True)
     # admin = db.Column(db.Boolean, index=False, unique=False, nullable=False)
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+    # Required for administrative interface
+    def __unicode__(self):
+        return self.email
 
     def set_password(self, password):
         """Create hashed password."""
@@ -42,7 +62,7 @@ class User(UserMixin, db.Model):
         return [prop.key for prop in inspect(self.__class__).iterate_properties]
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'<User {self.email}>'
 
 
 class Currency(db.Model):
@@ -62,12 +82,12 @@ class Outlet(db.Model):
     """Outlets"""
     __tablename__ = 'outlets'
     id = db.Column(db.Integer, primary_key=True)
-    outlet = db.Column(db.Integer, nullable=False)
+    outlet_id = db.Column(db.Integer, nullable=False)
     instock = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
-        return f'<Outlet id: {self.outlet}, stock: {self.instock}>'
+        return f'<Outlet id: {self.outlet_id}, stock: {self.instock}>'
 
 
 class Category(db.Model):

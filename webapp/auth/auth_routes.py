@@ -2,10 +2,9 @@ from flask import Blueprint, render_template, request, url_for, redirect  # , ma
 from flask_login import login_required, logout_user, current_user, login_user
 from datetime import datetime as dt
 # from flask import current_app as app
-from webapp.models import db, User
+from webapp.models import db, User  # , Currency, Outlet, Category
 from .forms import Login, SignUp
 from webapp import login_manager
-# from . import auth
 
 # Set up a Blueprint
 auth_bp = Blueprint('auth_bp', __name__,
@@ -49,8 +48,11 @@ def signup():
 
             if existing_user is None:
                 print('User is None, continue')
-                user = User(email=email,
-                            created_on=dt.now())
+                # user = User(email=email,
+                #             created_on=dt.now())
+                user = User()
+                user.email = email
+                user.created_on = dt.now()
                 user.set_password(password)
                 db.session.add(user)
                 db.session.commit()  # Create new user

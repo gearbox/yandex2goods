@@ -65,7 +65,7 @@ def build_tree(worksheet, shop_info: dict, categories: dict):
         ET.SubElement(offer, 'description').text = verify_input(product[15])
         outlets = ET.SubElement(offer, 'outlets')
         for outlet in shop_info['outlets']:
-            ET.SubElement(outlets, 'outlet', id=str(outlet['id']), instock=str(outlet['instock']))
+            ET.SubElement(outlets, 'outlet_id', id=str(outlet['id']), instock=str(outlet['instock']))
     indent(catalogue)
 
     tree = ET.ElementTree(catalogue)
